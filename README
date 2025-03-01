@@ -1,0 +1,6 @@
+This is a basic scraper to pull VFP articles from Doug Hennig's VFP development website (an excellent resource for all thing FoxPro and information that shouldn't be lost).
+Pulls article title, description, publication date and places into a csv as an index (including pdf url and zip url).
+Then downloads article PDF and places into folder 'pdfs' (if the pdf folder doesn't exist on local machine, code creates it).
+Then downloads zip folders and places them into folder 'zip files' (if the 'zip files' doesn't exist on local machine, code creates it).
+NOTE - downloaded zip folders are given same name as downloaded PDF file.
+Site checked - no robots.txt present.
