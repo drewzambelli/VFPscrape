@@ -58,8 +58,8 @@ soup = BeautifulSoup(response.text, "html.parser")
 # Step 2: Find all articles (each inside a <div class="card">)
 articles = soup.find_all("div", class_="card")
 
-limit = 5  # Limit for testing
-count = 0  # Counter for testing
+# limit = 5  # Limit for testing
+# count = 0  # Counter for testing
 
 # Create a directory to save the PDFs if it doesn't exist
 if not os.path.exists("pdfs"):
@@ -73,8 +73,8 @@ with open("scraped_articles.csv", "w", newline="", encoding="utf-8") as file:
     writer.writerow(["Title", "Description", "Published Date", "PDF URL", "Zip URL"])  # CSV Header
 
     for article in articles:
-        if count >= limit:
-            break
+        # if count >= limit:
+        #     break
 
         # Extract title from <h5 class="card-header">
         title_element = article.find("h5", class_="card-header")
@@ -90,6 +90,12 @@ with open("scraped_articles.csv", "w", newline="", encoding="utf-8") as file:
         white_paper_link = body.find("a", string="White Paper")  # Find the link with text 'White Paper'
         if white_paper_link and "href" in white_paper_link.attrs:
             pdf_link = white_paper_link["href"]
+
+        # Extract Zip link (second 'a' tag)
+        zip_link = None
+        links = body.find_all("a")
+        if len(links) > 1:  # Ensure there is a second 'a' tag for the Zip file
+            zip_link = links[1]["href"]
 
         # Download PDF
         if pdf_link:
@@ -112,12 +118,7 @@ with open("scraped_articles.csv", "w", newline="", encoding="utf-8") as file:
                 else:
                     print(f"Failed to download PDF for {title}. Content-Type: {content_type}")
 
-        zip_link = None
-        zip_file_link = body.find_all("a")[1]  # The second 'a' link is the Zip file
-        if zip_file_link and "href" in zip_file_link.attrs:
-            zip_link = zip_file_link["href"]
-        
-        # Download Zip file
+        # Download Zip file (only if zip_link exists)
         if zip_link:
             # Resolve full URL to Zip file
             full_zip_url = urljoin(URL, zip_link)  # Adjust URL if necessary
@@ -136,11 +137,12 @@ with open("scraped_articles.csv", "w", newline="", encoding="utf-8") as file:
                     print(f"Zip file saved as {zip_filename}")
                 else:
                     print(f"Failed to download Zip for {title}. Content-Type: {content_type}")
+
         
         # Write to CSV
         writer.writerow([title, description, published_date, pdf_link, zip_link])
 
-        count += 1  # Increment count for testing
+        # count += 1  # Increment count for testing
 
         # Debug Output
         print(f"Title: {title}\nDescription: {description}\nPublished Date: {published_date}\nPDF URL: {pdf_link}\n{'='*80}")
